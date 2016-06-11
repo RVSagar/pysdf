@@ -16,8 +16,8 @@ models_paths = [os.path.expanduser('~/.gazebo/models/')];
 if 'GAZEBO_MODEL_PATH' in os.environ:
   model_path_env = os.environ['GAZEBO_MODEL_PATH'].split(':');
   models_paths = models_paths + model_path_env
+  catkin_ws_path = model_path_env[0]
 
-catkin_ws_path = os.path.expanduser('~') + '/catkin_ws/src/'
 supported_sdf_versions = [1.4, 1.5, 1.6]
 
 catkin_ws_path_exists = os.path.exists(catkin_ws_path)
@@ -25,7 +25,7 @@ catkin_ws_path_exists = os.path.exists(catkin_ws_path)
 if not catkin_ws_path_exists:
   print ('----------------------------------------------------------')
   print ('%s does not exist.' % catkin_ws_path)
-  print ('Please change the catkin_ws_path variable inside pysdf/parse.py')
+  print ('Please add env variable GAZEBO_MODEL_PATH=path/to/ros_control/src/roboy_simulation')
   print ('----------------------------------------------------------')
   sys.exit(1)
 
@@ -127,13 +127,9 @@ def homogeneous_times_vector(homogeneous, vector):
 
 
 class SDF(object):
-  def __init__(self, **kwargs):
+  def __init__(self, arg):
     self.world = World()
-    if 'file' in kwargs:
-      self.from_file(kwargs['file'])
-    elif 'model' in kwargs:
-      self.from_model(kwargs['model'])
-
+    self.from_file(arg)
 
   def from_file(self, filename):
     if not os.path.exists(filename):

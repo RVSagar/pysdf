@@ -16,18 +16,11 @@ models_paths = [os.path.expanduser('~/.gazebo/models/')];
 if 'GAZEBO_MODEL_PATH' in os.environ:
   model_path_env = os.environ['GAZEBO_MODEL_PATH'].split(':');
   models_paths = models_paths + model_path_env
-  catkin_ws_path = model_path_env[0]
 
+catkin_ws_path = os.path.expanduser('~') + '/catkin_ws/src/'
 supported_sdf_versions = [1.4, 1.5, 1.6]
 
 catkin_ws_path_exists = os.path.exists(catkin_ws_path)
-
-if not catkin_ws_path_exists:
-  print ('----------------------------------------------------------')
-  print ('%s does not exist.' % catkin_ws_path)
-  print ('Please add env variable GAZEBO_MODEL_PATH=path/to/ros_control/src/roboy_simulation')
-  print ('----------------------------------------------------------')
-  sys.exit(1)
 
 def sanitize_xml_input_name(text):
   ### removes whitespaces before and after the tag text
@@ -61,16 +54,8 @@ def find_model_in_gazebo_dir(modelname):
           if not currfile.endswith('.sdf'):
             continue
           filename_path = os.path.join(dirpath, currfile)
-          tree = ET.parse(filename_path)
-          root = tree.getroot()
-          if root.tag != 'sdf':
-            continue
-          modelnode = get_node(root, 'model')
-          if modelnode == None:
-            continue
-          modelname_in_file = modelnode.attrib['name']
-          find_model_in_gazebo_dir.cache[modelname_in_file] = filename_path
-  #print(find_model_in_gazebo_dir.cache)
+          find_model_in_gazebo_dir.cache[os.path.basename(dirpath)] = filename_path
+  print(find_model_in_gazebo_dir.cache)
   return find_model_in_gazebo_dir.cache.get(modelname)
 find_model_in_gazebo_dir.cache = {}
 
@@ -127,9 +112,13 @@ def homogeneous_times_vector(homogeneous, vector):
 
 
 class SDF(object):
-  def __init__(self, arg):
+  def __init__(self, **kwargs):
     self.world = World()
-    self.from_file(arg)
+    if 'file' in kwargs:
+      self.from_file(kwargs['file'])
+    elif 'model' in kwargs:
+      self.from_model(kwargs['model'])
+
 
   def from_file(self, filename):
     if not os.path.exists(filename):

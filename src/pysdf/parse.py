@@ -55,7 +55,7 @@ def find_model_in_gazebo_dir(modelname):
             continue
           filename_path = os.path.join(dirpath, currfile)
           find_model_in_gazebo_dir.cache[os.path.basename(dirpath)] = filename_path
-  print(find_model_in_gazebo_dir.cache)
+  #print(find_model_in_gazebo_dir.cache)
   return find_model_in_gazebo_dir.cache.get(modelname)
 find_model_in_gazebo_dir.cache = {}
 

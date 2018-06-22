@@ -44,8 +44,10 @@ def find_mesh_in_catkin_ws(filename):
   if not find_mesh_in_catkin_ws.cache:
     result = ''
     for root, dirs, files in os.walk(catkin_ws_path, followlinks=True):
+      if modelname not in root:
+        continue;
       for currfile in files:
-        if currfile.endswith('.stl') or currfile.endswith('.dae'):
+        if (currfile.endswith('.stl') or currfile.endswith('.dae')):
           partial_path = ''
           for path_part in root.split('/'):
             partial_path += path_part + '/'
@@ -54,9 +56,12 @@ def find_mesh_in_catkin_ws(filename):
           catkin_stack_path = partial_path.replace(path_part + '/', '')
           filename_path = os.path.join(root, currfile).replace(catkin_stack_path, '')
           #print('Adding %s to mesh cache (catkin_stack_path=%s)' % (filename_path, catkin_stack_path))
+          # import pdb;pdb.set_trace()
+          # print(filename_path+'\n')
           find_mesh_in_catkin_ws.cache.append(filename_path)
     #print(find_mesh_in_catkin_ws.cache)
-  matching = [path for path in find_mesh_in_catkin_ws.cache if filename in path]
+  matching = [path for path in find_mesh_in_catkin_ws.cache if (filename in path and modelname in path)]
+
   return ' OR '.join(matching)
 
 find_mesh_in_catkin_ws.cache = []
@@ -156,6 +161,7 @@ def homogeneous_times_vector(homogeneous, vector):
 
 
 class SDF(object):
+
   def __init__(self, **kwargs):
     self.world = World()
     if 'file' in kwargs:
@@ -178,6 +184,8 @@ class SDF(object):
       print('Unsupported SDF version in %s. Aborting.\n' % filename)
       return
     self.world.from_tree(root, version=self.version)
+    global modelname
+    modelname = get_node(root, 'model').attrib['name']
 
 
   def from_model(self, modelname):

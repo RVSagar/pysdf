@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-
 import sys
-import argparse
-
 import pysdf
 
 
@@ -15,9 +12,8 @@ def main():
   args = parser.parse_args()
 
   sdf = pysdf.SDF(file=args.sdf)
+
   world = sdf.world
-  if args.plot:
-    world.plot_to_file(args.plot[0])
   if len(world.models) != 1:
     print('SDF contains %s instead of exactly one model. Aborting.' % len(world.models))
     sys.exit(1)
@@ -25,6 +21,7 @@ def main():
   model = world.models[0]
   print(model)
   model.save_urdf(args.urdf, prefix=None if args.no_prefix else '')
+
 
 
 if __name__ == '__main__':

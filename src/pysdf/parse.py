@@ -18,6 +18,7 @@ models_paths = [os.path.expanduser('~/.gazebo/models/')];
 if 'GAZEBO_MODEL_PATH' in os.environ:
   model_path_env = os.environ['GAZEBO_MODEL_PATH'].split(':');
   models_paths = models_paths + model_path_env
+  catkin_ws_path = model_path_env[0]
 
 mesh_path_env_name='MESH_WORKSPACE_PATH'
 if mesh_path_env_name in os.environ:
@@ -33,7 +34,7 @@ if not catkin_ws_path_exists:
   print ('Path (%s) does not exist.' % catkin_ws_path)
   print ('Please either set/change %s, or change ' % mesh_path_env_name)
   print ('the catkin_ws_path variable inside pysdf/parse.py')
-  print ('----------------------------------------------------------')
+
   sys.exit(1)
 
 def sanitize_xml_input_name(text):
@@ -72,7 +73,7 @@ def find_model_in_gazebo_dir(modelname):
   if not find_model_in_gazebo_dir.cache:
     for models_path in models_paths:
       for dirpath, dirs, files in os.walk(models_path, followlinks=True):
-        if canonical_sdf_name in files:
+        if canonical_sdf_name idn files:
           files.remove(canonical_sdf_name)
           files = [canonical_sdf_name] + files
         for currfile in files:
@@ -161,14 +162,14 @@ def homogeneous_times_vector(homogeneous, vector):
 
 
 class SDF(object):
+<<<<<<< HEAD
 
   def __init__(self, **kwargs):
+=======
+  def __init__(self, arg):
+>>>>>>> f89e79d461782bb4644415af65df5bd6325e3c65
     self.world = World()
-    if 'file' in kwargs:
-      self.from_file(kwargs['file'])
-    elif 'model' in kwargs:
-      self.from_model(kwargs['model'])
-
+    self.from_file(arg)
 
   def from_file(self, filename):
     if not os.path.exists(filename):

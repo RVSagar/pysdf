@@ -65,7 +65,7 @@ def find_mesh_in_catkin_ws(filename):
     #print(find_mesh_in_catkin_ws.cache)
   matching = [path for path in find_mesh_in_catkin_ws.cache if (filename in path and modelname in path)]
 
-  return ' OR '.join(matching)
+  return matching[0]
 
 find_mesh_in_catkin_ws.cache = []
 

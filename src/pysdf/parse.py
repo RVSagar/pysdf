@@ -13,6 +13,8 @@ from tf.transformations import *
 from naming import *
 from conversions import *
 
+import pdb
+
 models_paths = [os.path.expanduser('~/.gazebo/models/')];
 
 if 'GAZEBO_MODEL_PATH' in os.environ:
@@ -38,6 +40,7 @@ if not catkin_ws_path_exists:
 
 def sanitize_xml_input_name(text):
   ### removes whitespaces before and after the tag text
+  # pdb.set_trace()
   return text.strip()
 
 def find_mesh_in_catkin_ws(filename):
@@ -116,10 +119,14 @@ def prettyXML(uglyXML):
 
 def get_tag(node, tagname, default = None):
   tag = node.findall(tagname)
-  if tag:
-    return sanitize_xml_input_name(tag[0].text)
-  else:
-    return default
+  try:
+      if not tag:
+          return default
+      else:
+        print(tag[0].text)
+        return sanitize_xml_input_name(tag[0].text)
+  except:
+      return default
 
 def get_node(node, tagname, default = None):
   tag = node.findall(tagname)
@@ -154,7 +161,7 @@ def homogeneous_times_vector(homogeneous, vector):
   vector_as_hom = identity_matrix()
   vector_as_hom[:3,3] = vector.T
   res = numpy.dot(homogeneous, vector_as_hom)
-  return res[:3,3].T 
+  return res[:3,3].T
 
 
 
@@ -302,7 +309,7 @@ class Model(SpatialEntity):
 
   def __repr__(self):
     return ''.join((
-      'Model(\n', 
+      'Model(\n',
       '  %s\n' % indent(super(Model, self).__repr__(), 2),
       '  version: %s\n' % self.version,
       '  root_link: %s\n' % self.root_link.name if self.root_link else '',
@@ -590,7 +597,7 @@ class Link(SpatialEntity):
 
   def get_full_name(self):
     return self.parent_model.get_full_name() + '::' + self.name
-    
+
 
 
 

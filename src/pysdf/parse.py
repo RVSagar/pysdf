@@ -162,12 +162,8 @@ def homogeneous_times_vector(homogeneous, vector):
 
 
 class SDF(object):
-<<<<<<< HEAD
 
   def __init__(self, **kwargs):
-=======
-  def __init__(self, arg):
->>>>>>> f89e79d461782bb4644415af65df5bd6325e3c65
     self.world = World()
     self.from_file(arg)
 
